@@ -1,55 +1,47 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map, Observable, switchMap } from 'rxjs';
 import { FaceSnap } from '../models/face-snap.models';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FaceSnapsService {
-  faceSnaps: FaceSnap[] = 
-  [
-    {
-      id: 1,
-      title: 'Archibald',
-      description: 'Mon meilleur ami depuis toujours',
-      imageUrl: 'https://images.unsplash.com/photo-1567169866456-a0759b6bb0c8',
-      createdDate: new Date(),
-      snaps: 40,
-      location: 'Paris'
-    },
-    {
-      id: 2,
-      title: 'Three Rock Mountains',
-      description: 'Un endroit magnifique pour les randonnées',
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Three_Rock_Mountain_Southern_Tor.jpg/1920px-Three_Rock_Mountain_Southern_Tor.jpg',
-      createdDate: new Date(),
-      snaps: 50,
-      location: 'Wicklow'
-    },
-    {
-      id: 3,
-      title: 'Un bon repas',
-      description: 'Un plat savoureux',
-      imageUrl: 'https://n6g3q5q8.rocketcdn.me/wp-content/uploads/2022/08/Tajine-aux-crevettes-au-Thermomix-Un-delicieux-plat-marocain-a-preparer-470x264.jpg',
-      createdDate: new Date(),
-      snaps: 60
-    }
-  ];
 
-  getAllFaceSnaps(): FaceSnap[] {
-    return this.faceSnaps;
+  constructor(private http: HttpClient) {
+
   }
 
-  getFaceSnapById(faceSnapId: number): FaceSnap {
-    const faceSnap = this.faceSnaps.find(snap => snap.id === faceSnapId);
-    if(!faceSnap) {
-      throw new Error(`Could not find snap with id ${faceSnapId}`);
-    } else {
-      return faceSnap;
-    }
+  getAllFaceSnaps(): Observable<FaceSnap[]> {
+    return this.http.get<FaceSnap[]>('http://localhost:3000/facesnaps');
   }
 
-  snapFaceSnapById(faceSnapId: number, snapType: 'snap' | 'unsnap'): void {
-    const faceSnap = this.getFaceSnapById(faceSnapId);
-    snapType === 'snap' ? faceSnap.snaps++ : faceSnap.snaps--;
+  getFaceSnapById(faceSnapId: number): Observable<FaceSnap> {
+    return this.http.get<FaceSnap>(`http://localhost:3000/facesnaps/${faceSnapId}`);
+  }
+
+  snapFaceSnapById(faceSnapId: number, snapType: 'snap' | 'unsnap'): Observable<FaceSnap> {
+    return this.getFaceSnapById(faceSnapId).pipe(
+      map(faceSnap => ({
+        ...faceSnap,
+        snaps: faceSnap.snaps + (snapType === 'snap' ? 1 : -1)
+      })),
+      switchMap(updateFaceSnap => this.http.put<FaceSnap>(`http://localhost:3000/facesnaps/${faceSnapId}`, updateFaceSnap))
+    );
+  }
+
+  addFaceSnap(formValue: { title: string, description: string, imageUrl: string, location?: string}): Observable<FaceSnap> {
+    return this.getAllFaceSnaps().pipe(
+      map(facesnaps => [...facesnaps].sort((a: FaceSnap, b: FaceSnap) => a.id - b.id)),
+      map(sortedFacesnaps => sortedFacesnaps[sortedFacesnaps.length - 1]),
+      map(previousFacesnap => ({
+        ...formValue,
+        snaps: 0,
+        createdDate: new Date(),
+        id: previousFacesnap.id + 1
+      })),
+      switchMap(newFaceSnap => this.http.post<FaceSnap>('http://localhost:3000/facesnaps', newFaceSnap))
+    );  
+
   }
 }

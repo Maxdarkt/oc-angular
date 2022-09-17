@@ -1,4 +1,9 @@
 <div class="landing-block">
+  <form class="my-4 grid grid-cols-8" #emailForm="ngForm" (ngSubmit)="onSubmitForm(emailForm)">
+    <label for="emailInput" class="col-span-8 text-center my-2">Inscrivez-vous pour recevoir votre newsletter !</label>
+    <input type="text" id="emailInput" class="col-span-6 mx-3 px-2" [(ngModel)]="userEmail" name="userEmail">
+    <button type="submit" class="col-span-2 py-1 px-3 border rounded-lg bg-blue-500 shadow-sm transition-all duration-500 hover:bg-blue-700 hover:shadow-lg">OK !</button>
+  </form>
   <img src="assets/images/snapface.png" alt="Snapface logo">
   <div class="landing-links mt-8">
     <!-- <a routerLink="facesnaps">Continuer vers Snapface</a> -->

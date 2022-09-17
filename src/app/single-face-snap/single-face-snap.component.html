@@ -1,4 +1,4 @@
-<div class="lg:max-w-xl mx-auto p-4 sm:p-8 shadow-lg my-4 rounded-md" [ngClass]="{ 'outline outline-2 outline-green-300': buttonText === 'Oops, Un Snap!' }">
+<div class="lg:max-w-xl mx-auto p-4 sm:p-8 shadow-lg my-4 rounded-md" *ngIf="faceSnap$ | async as faceSnap" [ngClass]="{ 'outline outline-2 outline-green-300': buttonText === 'Oops, Un Snap!' }">
   <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-blue-400 text-center">
     {{ faceSnap.title | titlecase }}
   </h2>
@@ -16,7 +16,7 @@
       Photo prise à {{ faceSnap.location }}
   </p>
   <p>
-    <button class="py-2.5 px-6 border rounded-lg bg-blue-500 shadow-sm transition-all duration-500 hover:bg-blue-700 hover:shadow-lg" (click)="onSnap()">{{ buttonText }}</button>
+    <button class="py-2.5 px-6 border rounded-lg bg-blue-500 shadow-sm transition-all duration-500 hover:bg-blue-700 hover:shadow-lg" (click)="onSnap(faceSnap.id)">{{ buttonText }}</button>
     <span [ngStyle]="{ color: 'rgb(0,' + faceSnap.snaps * 10 + ',0)' }">👍 {{ faceSnap.snaps }}</span>
   </p>
 </div>
