@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { FaceSnap } from '../models/face-snap.models';
-import { FaceSnapsService } from '../services/face-snap.services';
+import { FaceSnap } from '../../../core/models/face-snap.models';
+import { FaceSnapsService } from '../../../core/services/face-snap.services';
 
 @Component({
   selector: 'app-face-snap',

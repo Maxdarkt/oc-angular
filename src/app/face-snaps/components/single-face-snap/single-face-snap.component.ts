@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { FaceSnap } from '../models/face-snap.models';
-import { FaceSnapsService } from '../services/face-snap.services';
+import { FaceSnap } from '../../../core/models/face-snap.models';
+import { FaceSnapsService } from '../../../core/services/face-snap.services';
 
 @Component({
   selector: 'app-single-face-snap',
